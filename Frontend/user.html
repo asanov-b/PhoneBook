@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PhoneBook - User</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-4">Phone Book</h2>
+        <button class="btn btn-outline-danger btn-sm" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form id="searchForm" class="row g-3">
+                <div class="col-md-2"><input class="form-control" id="firstName" placeholder="First Name"></div>
+                <div class="col-md-2"><input class="form-control" id="lastName" placeholder="Last Name"></div>
+                <div class="col-md-2"><input class="form-control" id="phoneNumber" placeholder="Phone Number"></div>
+                <div class="col-md-2"><input class="form-control" id="country" placeholder="Country"></div>
+                <div class="col-md-2"><input class="form-control" id="city" placeholder="City"></div>
+                <div class="col-md-2"><input class="form-control" id="street" placeholder="Street"></div>
+                <div class="col-md-12 mt-2">
+                    <button class="btn btn-primary">Search</button>
+                    <button type="button" class="btn btn-secondary" id="resetBtn">Reset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>First</th>
+                    <th>Last</th>
+                    <th>Phone</th>
+                    <th>Country</th>
+                    <th>City</th>
+                    <th>Street</th>
+                </tr>
+                </thead>
+                <tbody id="contactsBody"></tbody>
+            </table>
+            <ul class="pagination" id="pagination"></ul>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    const API = "http://localhost:8080/api/v1/contact";
+    const pageSize = 10;
+    let currentPage = 0;
+    let cachedContacts = [];
+
+    // ROLE CHECK
+    function parseJwt(token) {
+        if (!token) return null;
+        return JSON.parse(atob(token.split('.')[1]));
+    }
+
+    function getRole() {
+        const token = localStorage.getItem("token");
+        if (!token) return null;
+        const payload = parseJwt(token);
+        return payload.role || payload.roles?.[0] || null;
+    }
+
+    // Axios token
+    axios.interceptors.request.use(config => {
+        const token = localStorage.getItem("token");
+        if (token) config.headers.Authorization = token;
+        return config;
+    });
+
+    async function fetchContacts(page = 0, params = {}) {
+        params.page = page;
+        params.size = pageSize;
+
+        const searchParams = {...params};
+        delete searchParams.page;
+        delete searchParams.size;
+
+        const hasSearch = Object.values(searchParams).some(v => v);
+        const url = hasSearch ? API + "/search" : API;
+
+        const res = await axios.get(url, {params});
+        const data = res.data;
+
+        currentPage = data.number;
+        cachedContacts = data.content;
+
+        renderTable();
+        renderPagination(data.totalPages, data.number);
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById("contactsBody");
+        tbody.innerHTML = "";
+        cachedContacts.forEach(c => {
+            tbody.innerHTML += `
+            <tr>
+                <td>${c.firstName}</td>
+                <td>${c.lastName}</td>
+                <td>${c.phoneNumber}</td>
+                <td>${c.country}</td>
+                <td>${c.city}</td>
+                <td>${c.street}</td>
+            </tr>`;
+        });
+    }
+
+    function renderPagination(totalPages, activePage) {
+        const ul = document.getElementById("pagination");
+        ul.innerHTML = "";
+        for (let i = 0; i < totalPages; i++) {
+            ul.innerHTML += `
+            <li class="page-item ${i === activePage ? "active" : ""}">
+                <button class="page-link" onclick="goPage(${i})">${i + 1}</button>
+            </li>`;
+        }
+    }
+
+    function goPage(p) {
+        currentPage = p;
+        fetchContacts(p, getSearchParams());
+    }
+
+    searchForm.onsubmit = e => {
+        e.preventDefault();
+        fetchContacts(0, getSearchParams());
+    };
+    resetBtn.onclick = () => {
+        searchForm.reset();
+        fetchContacts(0, {});
+    };
+
+    function getSearchParams() {
+        return {
+            firstName: firstName.value,
+            lastName: lastName.value,
+            phoneNumber: phoneNumber.value,
+            country: country.value,
+            city: city.value,
+            street: street.value
+        };
+    }
+
+    function logout() {
+        if (!confirm("Are you sure you want to logout?")) return;
+        localStorage.removeItem("token");
+        window.location.href = "login.html";
+    }
+
+    (function authCheck() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            window.location.href = "login.html";
+        }
+    })();
+
+    fetchContacts();
+</script>
+</body>
+</html>
