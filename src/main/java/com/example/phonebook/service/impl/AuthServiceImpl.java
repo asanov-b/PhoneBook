@@ -11,6 +11,7 @@ import com.example.phonebook.security.service.JwtService;
 import com.example.phonebook.service.interfaces.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -19,6 +20,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -34,7 +36,9 @@ public class AuthServiceImpl implements AuthService {
         var auth = new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
         try {
             authenticationManager.authenticate(auth);
+            log.info("User {} logged in successfully", loginDTO.getUsername());
         } catch (AuthenticationException e) {
+            log.warn("Authentication failed for username={}", loginDTO.getUsername());
             throw new AuthenticationServiceException(e.getMessage());
         }
         String token = jwtService.generateToken(loginDTO.getUsername());
@@ -46,6 +50,7 @@ public class AuthServiceImpl implements AuthService {
     public void register(RegisterDTO registerDTO) {
 
         if (!registerDTO.getPassword().equals(registerDTO.getConfirmPassword())) {
+            log.warn("Password mismatch for username={}", registerDTO.getUsername());
             throw new BadRequestException("Passwords do not match");
         }
 
@@ -57,5 +62,6 @@ public class AuthServiceImpl implements AuthService {
                 .roles(roleRepository.findByRole(RoleName.USER))
                 .build();
         userRepository.save(user);
+        log.info("User {} registered successfully", registerDTO.getUsername());
     }
 }

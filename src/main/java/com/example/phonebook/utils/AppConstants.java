@@ -6,4 +6,9 @@ public interface AppConstants {
     String API_VERSION = "/v1";
     String AUTH = "/auth";
     String CONTACT = "/contact";
+
+    Integer SEARCH_PAGE = 0;
+    Integer SEARCH_SIZE = 10;
+
+
 }

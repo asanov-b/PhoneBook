@@ -1,6 +1,7 @@
 package com.example.phonebook.service.interfaces;
 
 import com.example.phonebook.dto.ContactDTO;
+import com.example.phonebook.dto.SearchDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.UUID;
@@ -17,5 +18,5 @@ public interface ContactService {
 
     ContactDTO getContactById(UUID id);
 
-    Page<ContactDTO> searchedContacts(String firstName, String lastName, String phoneNumber, String country, String city, String street, Integer page, Integer size);
+    Page<ContactDTO> searchedContacts(SearchDTO searchDTO);
 }
