@@ -43,7 +43,7 @@ public class ContactController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/search")
-    public ResponseEntity<Page<ContactDTO>> search(SearchDTO searchDTO) {
+    public ResponseEntity<Page<ContactDTO>> search( SearchDTO searchDTO) {
         log.info("GET {}/search page={}, size={}", API_PATH + API_VERSION + CONTACT, searchDTO.getPage(), searchDTO.getSize());
 
         log.debug("Search params: firstName={}, lastName={}, phone={}, country={}, city={}, street={}",

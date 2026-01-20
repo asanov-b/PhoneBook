@@ -102,8 +102,8 @@ public class ContactServiceImpl implements ContactService {
     @Override
     public ContactDTO updateContact(UUID id, ContactDTO contactDTO) {
 
-        Optional<Contact> byId = contactRepository.findById(id);
-        Contact contact = byId.orElseThrow(() -> new EntityNotFoundException("Contact not found"));
+        Contact contact = contactRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Contact not found"));
 
         if (contactRepository.existsByPhoneNumberAndIdIsNot(contactDTO.getPhoneNumber(), id)) {
             log.warn("Phone number {} already exists", contactDTO.getPhoneNumber());
@@ -112,22 +112,10 @@ public class ContactServiceImpl implements ContactService {
 
         contactMapper.forUpdate(contact, contactDTO);
 
-        /*contact.setFirstName(contactDTO.getFirstName());
-        contact.setLastName(contactDTO.getLastName());
-        contact.setPhoneNumber(contactDTO.getPhoneNumber());
-        contact.setUpdatedBy(userRepository.findByUsername(SecurityUtil.getCurrentUser()));
-
-        Address address = contact.getAddress();
-        address.setCountry(contactDTO.getCountry());
-        address.setCity(contactDTO.getCity());
-        address.setStreet(contactDTO.getStreet());
-        address.setUpdatedBy(userRepository.findByUsername(SecurityUtil.getCurrentUser()));
-        contact.setAddress(address);*/
         Contact saved = contactRepository.save(contact);
         log.info("Contact id={} updated successfully", saved.getId());
 
         return contactMapper.toDTO(saved);
     }
-
 
 }

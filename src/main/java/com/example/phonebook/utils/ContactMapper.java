@@ -45,7 +45,7 @@ public class ContactMapper {
         return contact;
     }
 
-    public Contact forUpdate(Contact contact, ContactDTO contactDTO) {
+    public void forUpdate(Contact contact, ContactDTO contactDTO) {
         contact.setFirstName(contactDTO.getFirstName());
         contact.setLastName(contactDTO.getLastName());
         contact.setPhoneNumber(contactDTO.getPhoneNumber());
@@ -57,6 +57,5 @@ public class ContactMapper {
         address.setStreet(contactDTO.getStreet());
         address.setUpdatedBy(userRepository.findByUsername(SecurityUtil.getCurrentUser()));
         contact.setAddress(address);
-        return contact;
     }
 }

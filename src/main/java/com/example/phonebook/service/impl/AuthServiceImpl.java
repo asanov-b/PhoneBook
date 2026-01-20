@@ -9,6 +9,7 @@ import com.example.phonebook.repository.RoleRepository;
 import com.example.phonebook.repository.UserRepository;
 import com.example.phonebook.security.service.JwtService;
 import com.example.phonebook.service.interfaces.AuthService;
+import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -45,13 +46,17 @@ public class AuthServiceImpl implements AuthService {
         return new LoginResDTO(token);
     }
 
-    @SneakyThrows
     @Override
     public void register(RegisterDTO registerDTO) {
 
         if (!registerDTO.getPassword().equals(registerDTO.getConfirmPassword())) {
             log.warn("Password mismatch for username={}", registerDTO.getUsername());
-            throw new BadRequestException("Passwords do not match");
+            throw new IllegalArgumentException("Passwords do not match");
+        }
+
+        if (userRepository.existsByUsername(registerDTO.getUsername())) {
+            log.warn("Username {} already exists", registerDTO.getUsername());
+            throw new EntityExistsException("Username already exists");
         }
 
         User user = User.builder()
