@@ -38,7 +38,6 @@ public class GlobalException {
                 .body(e.getMessage());
     }
 
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         Map<String, String> massages = new HashMap<>();
@@ -50,5 +49,4 @@ public class GlobalException {
         log.error(massages.toString());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(massages);
     }
-
 }

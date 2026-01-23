@@ -37,8 +37,8 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth ->
                 auth
-                        .requestMatchers("/swagger-ui.html","/swagger-ui/**","/v3/api-docs/**").permitAll()
-                        .requestMatchers(API_PATH+API_VERSION+AUTH+"/**").permitAll()
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers(API_PATH + API_VERSION + AUTH + "/**").permitAll()
                         .anyRequest().authenticated()
         );
         http.addFilterBefore(myFilter, UsernamePasswordAuthenticationFilter.class);
@@ -61,6 +61,4 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager() {
         return new ProviderManager(authenticationProvider());
     }
-
-
 }

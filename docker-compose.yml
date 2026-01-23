@@ -7,16 +7,12 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 0000
       POSTGRES_DB: phonebook_db
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   app:
     image: ${DOCKERHUB_USERNAME}/phonebook:latest
     container_name: spring_app
-    ports:
-      - "80:8080"
     depends_on:
       - db
     environment:
@@ -24,6 +20,18 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 0000
       JWT_SECRET: ${JWT_SECRET_KEY}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/app/logs
+
+  frontend:
+    image: asanovbekzod/frontend:latest
+    container_name: frontend
+    depends_on:
+      - app
+    ports:
+      - "80:80"
 
 volumes:
   postgres_data:

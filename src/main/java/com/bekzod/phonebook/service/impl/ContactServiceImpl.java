@@ -117,5 +117,4 @@ public class ContactServiceImpl implements ContactService {
 
         return contactMapper.toDTO(saved);
     }
-
 }

@@ -55,7 +55,6 @@ public class MyRunner implements CommandLineRunner {
                 contacts.add(contact);
             }
             contactRepository.saveAll(contacts);
-
         }
     }
 }

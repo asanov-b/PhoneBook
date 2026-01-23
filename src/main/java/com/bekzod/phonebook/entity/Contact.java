@@ -18,7 +18,6 @@ public class Contact extends BaseEntity {
     private String firstName;
     @Column(nullable = false)
     private String lastName;
-
     @Column(unique = true)
     private String phoneNumber;
 
