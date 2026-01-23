@@ -1,4 +1,4 @@
-> 🇺🇿 Inglizcha versiya: [README.md](README.md)
+> 🇬🇧 English version: [README.md](README.md)
 
 # 📞 PhoneBook — Java Backend Portfolio (Production-Ready)
 
