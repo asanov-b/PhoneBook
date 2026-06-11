@@ -20,12 +20,12 @@ Business logic is intentionally simple to keep the emphasis on **backend design,
 
 ## 🔗 Quick Access
 
-- 🌍 **Live Demo:** http://44.200.65.144
+- 🌍 **Live Demo:** http://3.238.239.146
   - **Demo users:**
     - Admin: `admin / admin`
     - User: `user / user`
 
-- 📘 **API Documentation (Swagger):** http://44.200.65.144:8080/swagger-ui/index.html
+- 📘 **API Documentation (Swagger):** http://3.238.239.146:8080/swagger-ui/index.html
 - 🐳 **Docker Image:** docker.io/asanovbekzod/phonebook:latest
 - 🔄 **CI/CD Pipeline: GitHub Actions — automated test, build, Docker image publishing, and server deployment on every push to main
 
